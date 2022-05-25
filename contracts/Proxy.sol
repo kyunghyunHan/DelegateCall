@@ -11,32 +11,32 @@ contract Proxy {
   function getImplementation()public view returns(address){
     return implementation;
   }
-
-  
-
-fallback()external{
-  assembly{
+  fallback() external {
+  assembly {
     let ptr := mload(0x40)
-    calldatacop(ptr,0,calldatasize())
+    calldatacopy(ptr, 0, calldatasize())
 
-    let result := dalegatecall(
-
+    let result := delegatecall(
       gas(),
-      sload(implemetation.slot),
+      sload(implementation.slot),
       ptr,
       calldatasize(),
       0,
       0
     )
-    let size:= returndatasize()
-    returndatacopy(ptr,0,size)
+
+    let size := returndatasize()
+    returndatacopy(ptr, 0, size)
 
     switch result
-    case 0{
-      revert(ptr,size)
+    case 0 {
+      revert(ptr, size)
     }
-    default{
-      return(ptr,size)
+    default {
+      return(ptr, size)
     }
+  }
 }
-}
+
+} 
+
